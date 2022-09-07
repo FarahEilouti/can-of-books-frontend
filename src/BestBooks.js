@@ -74,19 +74,19 @@ class Books extends React.Component {
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Book Name</Form.Label>
+            <Form.Label>Book description</Form.Label>
             <Form.Control
               type="text"
               name="bookdescription"
-              placeholder="Book description"
+              placeholder="tell something about this book"
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Book Name</Form.Label>
+            <Form.Label>Book status</Form.Label>
             <Form.Control
               type="text"
               name="bookstatus"
-              placeholder="Book status"
+              placeholder="eg. (available, sold out, out of stock)"
             />
             <Button variant="primary" type="submit">
               Submit
