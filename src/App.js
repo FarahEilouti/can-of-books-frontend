@@ -1,48 +1,31 @@
 import React from "react";
-import axios from "axios";
-
+import BestBooks from "./BestBooks";
+import Profile from "./Profile";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Header from './Header.js'
 
 class Books extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      BooksArr: [],
-    };
-  }
-
-  componentDidMount = () => {
-    axios
-      .get(`http://localhost:3051/books`)
-      .then((result) => {
-        console.log(result.data);
-        this.setState({
-          BooksArr: result.data,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
   render() {
     return (
       <>
-      <div>Books</div>
-        {
-          this.state.BooksArr.map(item =>{
-            return(
-              <>
-                <h4>Book title : {item.title} </h4>
-                <p>book  description: {item.description}</p>
-                <p>movie status : {item.status}</p>
-                <p>__</p>
-              </>
-            )
-          })
-        }
-
+        <Router>
+          <Routes>
+            <Route
+              exact
+              path="/"
+              element={
+                <>
+                  <Header />
+                  <BestBooks />
+                </>
+              }
+            ></Route>
+            <Route exact path="/profile" element={<Profile />}></Route>
+          </Routes>
+        </Router>
       </>
-
-    )
+    );
   }
 }
 
