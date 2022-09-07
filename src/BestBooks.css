@@ -1,0 +1,20 @@
+img{
+    width: 100%;
+    height: 100%;
+}
+.carousel-caption :first-child{
+    font-family: "Times New Roman", Times, serif;
+    font-size:200%;
+    border-bottom: 2px solid rgb(99, 99, 99);
+}
+.carousel-caption{
+    font-family: "Times New Roman", Times, serif;
+    font-size:120%;
+
+    text-align: center;
+    align-items: center;
+}
+
+.carousel-caption :last-child{
+    margin: 110px;
+}
