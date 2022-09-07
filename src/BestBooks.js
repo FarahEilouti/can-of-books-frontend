@@ -2,20 +2,24 @@ import React from "react";
 import axios from "axios";
 import Carousel from "react-bootstrap/Carousel";
 import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 import "./BestBooks.css";
+import SelectBook from "./SelectBook";
+import SelectBookUpdate from "./SelectBookUpdate";
 
 class Books extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       BooksArr: [],
+      bookShowModal: false,
+      updateShowModal: false,
+      bookChosen: [],
     };
   }
 
   componentDidMount = () => {
     axios
-      .get(`http://localhost:3000/books`)
+      .get(`http://localhost:3005/books`)
       .then((result) => {
         this.setState({
           BooksArr: result.data,
@@ -36,7 +40,7 @@ class Books extends React.Component {
     };
 
     axios
-      .post("http://localhost:3000/addBook", booksObj)
+      .post("http://localhost:3005/addBook", booksObj)
       .then((result) => {
         this.setState({
           BooksArr: result.data,
@@ -49,7 +53,7 @@ class Books extends React.Component {
 
   deleteBook = (id) => {
     axios
-      .delete(`http://localhost:3000/deleteBook/${id}`)
+      .delete(`http://localhost:3005/deleteBook/${id}`)
       .then((result) => {
         this.setState({
           BooksArr: result.data,
@@ -59,40 +63,72 @@ class Books extends React.Component {
         console.log(err);
       });
   };
+
+  handleShow = () => {
+    this.setState({
+      bookShowModal: true,
+    });
+  };
+  handleClose = () => {
+    this.setState({
+      bookShowModal: false,
+      updateShowModal: false,
+    });
+  };
+
+  openFormModal = (bookChosen) => {
+    this.setState({
+      updateShowModal: true,
+      bookChosen: bookChosen,
+    });
+  };
+
+  updateBook = (event) => {
+    event.preventDefault();
+    const booksObj = {
+      title: event.target.bookTitle.value,
+      description: event.target.bookDescription.value,
+      status: event.target.bookStatus.value,
+    };
+
+    const id = this.state.bookChosen._id;
+    // console.log(id);
+
+    axios
+      .put(`http://localhost:3005/updateBook/${id}`, booksObj)
+      .then((result) => {
+        this.setState({
+          BooksArr: result.data,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   render() {
     return (
       <>
+        {/* <form onSubmit={this.addBook}>
+          <input type="text" name="booktitle" placeholder="Book Title" />
+          <input
+            type="text"
+            name="bookdescription"
+            placeholder="Book Description"
+          />
+          <input type="text" name="bookstatus" placeholder="Book Status" />
+          <button type="submit">Add</button>
+        </form> */}
 
+        <Button variant="info" onClick={this.handleShow} id="addButton">
+          Add Book
+        </Button>
 
-        <Form onSubmit={this.addBook}>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Book Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="booktitle"
-              placeholder="Book Name"
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Book description</Form.Label>
-            <Form.Control
-              type="text"
-              name="bookdescription"
-              placeholder="tell something about this book"
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Book status</Form.Label>
-            <Form.Control
-              type="text"
-              name="bookstatus"
-              placeholder="eg. (available, sold out, out of stock)"
-            />
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
-          </Form.Group>
-        </Form>
+        <SelectBook
+          show={this.state.bookShowModal}
+          handleClose={this.handleClose}
+          addBook={this.addBook}
+        />
 
         <Carousel>
           {this.state.BooksArr.length ? (
@@ -104,17 +140,27 @@ class Books extends React.Component {
                     <h4>Book title : {item.title} </h4>
                     <p>book description: {item.description}</p>
                     <p>movie status : {item.status}</p>
-                    <button onClick={() => this.deleteBook(item._id)}>
+                    <Button onClick={() => this.deleteBook(item._id)}>
                       Delete Book
-                    </button>
+                    </Button>
+                    <Button onClick={() => this.openFormModal(item)}>
+                      Update Book
+                    </Button>
                   </Carousel.Caption>
                 </Carousel.Item>
               );
             })
           ) : (
-            <h3>No Books Found</h3>
+            <h1>No Books Found</h1>
           )}
         </Carousel>
+
+        <SelectBookUpdate
+          show={this.state.updateShowModal}
+          handleClose={this.handleClose}
+          updateBook={this.updateBook}
+          bookChosen={this.state.bookChosen}
+        />
       </>
     );
   }
