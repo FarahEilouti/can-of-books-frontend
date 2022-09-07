@@ -3,7 +3,7 @@ import BestBooks from "./BestBooks";
 import Profile from "./Profile";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Header from './Header.js'
+import Header from "./Header.js";
 
 class Books extends React.Component {
   render() {
