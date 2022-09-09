@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import "./BestBooks.css";
 import SelectBook from "./SelectBook";
 import SelectBookUpdate from "./SelectBookUpdate";
+import { withAuth0 } from '@auth0/auth0-react';
 
 class Books extends React.Component {
   constructor(props) {
@@ -18,8 +19,11 @@ class Books extends React.Component {
   }
 
   componentDidMount = () => {
+    const { user } = this.props.auth0;
+    console.log("env",process.env.REACT_APP_URL)
+
     axios
-      .get(`http://localhost:3005/books`)
+      .get(`${process.env.REACT_APP_URL}books/${user.email}`)
       .then((result) => {
         this.setState({
           BooksArr: result.data,
@@ -32,15 +36,18 @@ class Books extends React.Component {
 
   addBook = (event) => {
     event.preventDefault();
+    const { user } = this.props.auth0;
 
     const booksObj = {
       bookTitle: event.target.booktitle.value,
       bookDescription: event.target.bookdescription.value,
       bookStatus: event.target.bookstatus.value,
+      email : user.email,
+      name : user.name
     };
 
     axios
-      .post("http://localhost:3005/addBook", booksObj)
+      .post(`${process.env.REACT_APP_URL}addBook/${user.email}`, booksObj)
       .then((result) => {
         this.setState({
           BooksArr: result.data,
@@ -52,8 +59,9 @@ class Books extends React.Component {
   };
 
   deleteBook = (id) => {
+    const { user } = this.props.auth0;
     axios
-      .delete(`http://localhost:3005/deleteBook/${id}`)
+      .delete(`${process.env.REACT_APP_URL}deleteBook/${id}/${user.email}`)
       .then((result) => {
         this.setState({
           BooksArr: result.data,
@@ -85,17 +93,21 @@ class Books extends React.Component {
 
   updateBook = (event) => {
     event.preventDefault();
+    const { user } = this.props.auth0;
+
     const booksObj = {
       title: event.target.bookTitle.value,
       description: event.target.bookDescription.value,
       status: event.target.bookStatus.value,
+      email : user.email,
+      name : user.name
     };
-
+    this.handleClose()
     const id = this.state.bookChosen._id;
     // console.log(id);
 
     axios
-      .put(`http://localhost:3005/updateBook/${id}`, booksObj)
+      .put(`${process.env.REACT_APP_URL}updateBook/${id}/${user.email}`, booksObj)
       .then((result) => {
         this.setState({
           BooksArr: result.data,
@@ -105,6 +117,7 @@ class Books extends React.Component {
         console.log(err);
       });
   };
+
 
   render() {
     return (
@@ -166,4 +179,4 @@ class Books extends React.Component {
   }
 }
 
-export default Books;
+export default withAuth0(Books);

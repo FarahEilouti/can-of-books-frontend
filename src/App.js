@@ -3,30 +3,30 @@ import BestBooks from "./BestBooks";
 import Profile from "./Profile";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Header from "./Header.js";
+import Header from "./Header";
+import { withAuth0 } from "@auth0/auth0-react";
 
-class Books extends React.Component {
+class App  extends React.Component {
   render() {
+    const { isAuthenticated } = this.props.auth0;
     return (
       <>
         <Router>
+          <Header />
           <Routes>
+            <Route exact path="/" element={isAuthenticated && <BestBooks />} />
             <Route
               exact
-              path="/"
-              element={
-                <>
-                  <Header />
-                  <BestBooks />
-                </>
-              }
-            ></Route>
-            <Route exact path="/profile" element={<Profile />}></Route>
+              path="/about"
+              element={isAuthenticated && <Profile />}
+            />
           </Routes>
+
+         
         </Router>
       </>
     );
   }
 }
 
-export default Books;
+export default withAuth0(App);
